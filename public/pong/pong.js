@@ -19,7 +19,7 @@ function draw() {
   collision(ball, paddleMe);
   ball.move();
   paddleMe.move();
-  // paddleAi.followBall(); TODO
+  paddleAi.followBall();
 }
 
 function collision(ball, paddle) {
@@ -46,12 +46,12 @@ function Ball() {
   this.vy = -6;
   this.ballWidth = 30;
 
-  this.draw = function(){
+  this.draw = () => {
     fill(255);
     ellipse(this.x, this.y, this.ballWidth);
   }
 
-  this.move = function(){
+  this.move = () => {
     this.x += this.vx;
     this.y += this.vy;
 
@@ -64,7 +64,7 @@ function Ball() {
     }
   }
 
-  this.bump = function() {
+  this.bump = () => {
     this.vx = -this.vx;
     this.vx += 5;
     this.x += this.vx;
@@ -81,12 +81,12 @@ function Paddle(x) {
   this.x = x == 0 ? 0 : x - this.paddleWidth - 1;
   this.y = (h / 2) - this.h / 2
 
-  this.draw = function() {
+  this.draw = () => {
     fill(255);
     rect(this.x, this.y, this.paddleWidth, this.h);
   }
 
-  this.move = function() {
+  this.move = () => {
     if (keyIsDown(UP_ARROW)) {
       if (this.y > 0 ){
         this.y -= 10;
@@ -97,5 +97,9 @@ function Paddle(x) {
         this.y += 10;
       }
     }
+  }
+
+  this.followBall = () => {
+
   }
 }
