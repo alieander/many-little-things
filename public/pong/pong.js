@@ -1,10 +1,11 @@
 h = 600;
 w = document.getElementById("pong-container").offsetWidth;
+fps = 60;
 
 function setup() {
   createCanvas(w, h);
   background(51);
-  frameRate(60);
+  frameRate(fps);
   ball = new Ball();
   paddleMe = new Paddle(0);
   paddleAi = new Paddle(w);
@@ -17,21 +18,25 @@ function draw() {
   paddleAi.draw();
 
   collision(ball, paddleMe);
+  collision(ball, paddleAi);
+
   ball.move();
   paddleMe.move();
-  paddleAi.followBall();
+  paddleAi.followBall(ball);
 }
 
 function collision(ball, paddle) {
-  var ballX = ball.x;
+  var ballLeft = ball.x;
+  var ballRight = ball.x + ball.ballWidth;
   var ballTop = ball.y;
   var ballBottom = ball.y + ball.ballWidth;
 
-  var paddleX = paddle.x + paddle.paddleWidth + 20;
+  var paddleRight = paddle.x + ball.ballWidth/2;
+  var paddleLeft = paddle.x + paddle.paddleWidth + ball.ballWidth/2;
   var paddleTop = paddle.y;
   var paddleBottom = paddle.y + paddle.h;
 
-  if (ballX <= paddleX){ 
+  if (ballLeft <= paddleLeft && ballRight >= paddleRight){
     if (ballTop <= paddleBottom && ballBottom >= paddleTop) {
       console.log('BUMP ' + ball.x);
       ball.bump();
@@ -66,8 +71,6 @@ function Ball() {
 
   this.bump = () => {
     this.vx = -this.vx;
-    this.vx += 5;
-    this.x += this.vx;
 
     if (this.x + this.ballWidth / 2 > w || this.x - this.ballWidth / 2 < 0) {
       this.vx = -this.vx
@@ -99,7 +102,12 @@ function Paddle(x) {
     }
   }
 
-  this.followBall = () => {
-
+  this.followBall = (ball) => {
+    ball_location = ball.y - ball.ballWidth / 2;
+    if (this.y < ball_location) {
+      this.y += 5;
+    } else if (this.y > ball_location) {
+      this.y -= 5;
+    }
   }
 }
