@@ -1,10 +1,11 @@
 h = 600;
 w = document.getElementById("binary-search-container").offsetWidth;
+fontSize = 40;
 
 function setup() {
   createCanvas(w, h);
   background(51);
-  frameRate(30);
+  frameRate(60);
 
   simple_array = new_array().sort((a, b) => a - b);
   binary_array = simple_array.slice();
@@ -19,19 +20,32 @@ function setup() {
 
   simple_graph.drawBackground();
   binary_graph.drawBackground();
+
+  textSize(fontSize);
+  textAlign(CENTER, CENTER);
 }
 
 var addFrames = 1;
 
 function draw() {
-  simple.draw();
-  simple.step();
+  if (!simple.finished) {
+    simple.draw();
+    simple.step();
+    simple.graph.drawWords();
+  }
 
-  binary.draw();
-  binary.step();
+  if (!binary.finished) {
+    binary.draw();
+    binary.step();
+    binary.graph.drawWords();
+  }
 
   if(binary.finished && simple.finished) { 
     if(addFrames == 0) {
+      simple.draw();
+      simple.step();
+      binary.draw();
+      binary.step();
       noLoop();
     } else {
       addFrames--;
@@ -57,6 +71,15 @@ function Graph(x, y, w, h, border) {
     rect(this.x, this.y, this.w, this.h);
   }
 
+  this.drawWords = () => {
+    fill(255);
+    rect(this.x, this.y, 200, this.x + 50);
+
+    fill(0);
+    textAlign(LEFT);
+    text(this.iteration, this.x + 25, this.y + 25);
+  }
+
   this.draw_array = (array, search, finished, below, above) => {
     fill(51);
     width = this.w / array.length;
@@ -65,7 +88,6 @@ function Graph(x, y, w, h, border) {
         fill(255,0,0);
       } else if(above <= i || below >= i) {
         fill(0,255,0);
-        this.iteration++;
       }
       height = this.h - this.h + array[i]
       rect(this.x + (i * width), this.y + (this.h - height), width, height);
@@ -94,6 +116,7 @@ function SimpleGraph(array, search_for, graph) {
         console.log('Simple: DONE');
         this.finished = true;
       }
+      this.graph.iteration++;
     }
   }
 }
@@ -137,6 +160,7 @@ function BinaryGraph(array, search_for, graph) {
           this.marker = this.array.length;
         }
       }
+      this.graph.iteration++;
     }
   }
 }
